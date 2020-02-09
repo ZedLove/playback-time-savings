@@ -1,45 +1,48 @@
 <template>
-  <div class="calc">
-    <input
-      class="time-input"
-      type="number"
-      min="0"
-      max="100"
-      name="hours"
-      v-model="hours"
-      v-on:input="changeHours"
-    />
-    <label for="hours">h</label>
-    <input
-      class="time-input"
-      type="number"
-      min="0"
-      max="59"
-      name="mins"
-      v-model="mins"
-      v-on:input="changeMins"
-    />
-    <label for="mins">m</label>
-    <input
-      class="time-input"
-      type="number"
-      min="0"
-      max="59"
-      name="secs"
-      v-model="secs"
-      v-on:input="changeSecs"
-    />
-    <label for="secs">s</label>
-    <div class="ratio-input">
-      <label for="selectedRatio">Playback speed:</label>
-      <select class="selected-ratio" v-model="selectedRatio">
-        <option v-for="ratio in ratios" v-bind:key="ratio" v-bind:value="ratio">{{ ratio }}</option>
-      </select>
-    </div>
-    <!-- <div class="duration">Total Duration: {{ duration }}</div> -->
-    <div class="duration">Converted Duration: {{ formatDuration(convertedDuration) }}</div>
-    <div class="savings">Savings: {{ formatDuration(savings) }}</div>
-  </div>
+  <section class="calc">
+    <form>
+      <div class="inputs-wrapper">
+        <input
+          v-model="hours"
+          class="time-input"
+          type="number"
+          min="0"
+          max="100"
+          name="hours"
+          @:input="changeValue"
+        />
+        <label for="hours">h</label>
+        <input
+          v-model="mins"
+          class="time-input"
+          type="number"
+          min="0"
+          max="59"
+          name="mins"
+          @:input="changeValue"
+        />
+        <label for="mins">m</label>
+        <input
+          v-model="secs"
+          class="time-input"
+          type="number"
+          min="0"
+          max="59"
+          name="secs"
+          @:input="changeValue"
+        />
+        <label for="secs">s</label>
+      </div>
+      <fieldset class="ratio-input">
+        <label for="selectedRatio">Playback speed:</label>
+        <select class="selected-ratio" v-model="selectedRatio">
+          <option v-for="ratio in ratios" v-bind:key="ratio" v-bind:value="ratio">{{ ratio }}</option>
+        </select>
+      </fieldset>
+    </form>
+    <p class="duration">Converted Duration: {{ formatDuration(convertedDuration) }}</p>
+    <p class="savings">Savings: {{ formatDuration(savings) }}</p>
+  </section>
 </template>
 
 <script>
@@ -47,26 +50,13 @@ import { formatDistanceStrict } from "date-fns";
 import { addSeconds, addMinutes, addHours } from "date-fns/fp";
 import { flow } from "lodash/fp";
 
-// const DATE_FORMAT = "hh:mm:ss";
-
-const changeHours = e => {
-  const h = parseInt(e.target.data, 10);
-  return h;
+const changeValue = e => {
+  return parseInt(e.target.data, 10);
 };
-
-const changeMins = e => {
-  const m = parseInt(e.target.data, 10);
-  return m;
-};
-
-const changeSecs = e => {
-  const s = parseInt(e.target.data, 10);
-  return s;
-};
-
 // format seconds to `hh:mm:ss`
 // c/o https://github.com/date-fns/date-fns/issues/284#issuecomment-555838603
 // with modifications
+// TODO - refactor this without locales
 const formatDuration = (sec, locale = "en-us") => {
   if (sec) {
     const [delimiter = ":"] =
@@ -105,7 +95,8 @@ const formatDuration = (sec, locale = "en-us") => {
 
 const getDifferenceInSeconds = (end, start = initialState.start) => {
   // formatDistanceStrict() gets (end - start) in seconds
-  // but returns a string as "{{ n }} seconds", so we need to split
+  // but returns a string as "{{ n }} seconds"
+  // split on " " and take the first element
   return formatDistanceStrict(end, start, {
     unit: "second"
   }).split(" ")[0];
@@ -113,11 +104,7 @@ const getDifferenceInSeconds = (end, start = initialState.start) => {
 
 const computeDuration = vm => {
   const { hours, mins, secs } = vm;
-  const addValues = flow(
-    addSeconds(secs),
-    addMinutes(mins),
-    addHours(hours)
-  );
+  const addValues = flow(addSeconds(secs), addMinutes(mins), addHours(hours));
   const end = addValues(initialState.start);
 
   return getDifferenceInSeconds(end);
@@ -158,10 +145,8 @@ export default {
     }
   },
   methods: {
-    changeHours: changeHours,
-    changeMins: changeMins,
-    changeSecs: changeSecs,
-    formatDuration: formatDuration
+    changeValue,
+    formatDuration
   }
 };
 </script>
@@ -172,29 +157,54 @@ export default {
   display: block;
 } */
 label {
+  font-size: 3rem;
+}
+
+fieldset {
+  border: none;
+  margin: 0;
+  padding: 0;
+}
+
+.inputs-wrapper {
+  display: flex;
+  align-items: baseline;
+}
+
+/* .input-wrapper {
+  flex: 1 1 auto;
+  border: 1px solid green;
+} */
+
+.time-input {
+  background: #272e38;
+  color: #cacaca;
+  border: none;
   font-size: 10vh;
+  text-align: right;
+  width: 100%;
 }
 
 .ratio-input {
+  background: #272e38;
+  color: #cacaca;
   display: block;
 }
 
 .selected-ratio {
   font-size: 5vh;
   margin: 0 1em;
-}
-
-.time-input {
-  border: none;
-  font-size: 14vh;
-  text-align: right;
+  background: #272e38;
+  color: #cacaca;
 }
 
 .duration {
   display: block;
+  font-size: 6vh;
 }
 
 .savings {
   display: block;
+  font-size: 6vh;
 }
 </style>
