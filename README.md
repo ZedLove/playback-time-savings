@@ -19,10 +19,14 @@ Build for production: `yarn build`
 ### Current Functionality
 - converts given input and displays amount of time saved
 - users can select different playback rates
-- looks ugly
+- looks less ugly than before
 
 ### Roadmap
-- aesthetic assistance
+- aesthetic and UX improvements
+  - figure out which elements take priority and display them larger
+  - add +/- buttons for tap users
+  - overflow functionality for when a user inputs mins or secs larger than 59
+- a11y overhaul
 - unit testing
 - add multiple durations with total time saved
 - allow users to search some API (TBD) for films/television shows and their runtimes
