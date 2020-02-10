@@ -5,14 +5,14 @@
 </template>
 
 <script>
-import Calc from "./components/Calc.vue";
+import Calc from './components/Calc.vue'
 
 export default {
-  name: "PlaybackTimeSavings",
+  name: 'PlaybackTimeSavings',
   components: {
     Calc
   }
-};
+}
 </script>
 
 <style>
@@ -21,7 +21,7 @@ body {
   color: #cacaca;
 }
 #app {
-  font-family: "Avenir", Helvetica, Arial, sans-serif;
+  font-family: 'Avenir', Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
